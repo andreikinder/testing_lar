@@ -11,12 +11,12 @@ class Team extends Model
 
     protected $fillable = ['name', 'size'];
 
-    public function add($user) {
+    public function add($users) {
 
-        $this->guardAgainstToManyMembers();
+        $this->guardAgainstToManyMembers($users);
 
-        $method = $user instanceof User ? 'save' : 'saveMany';
-        $this->members()->$method($user);
+        $method = $users instanceof User ? 'save' : 'saveMany';
+        $this->members()->$method($users);
 
     }
 
@@ -48,9 +48,13 @@ class Team extends Model
         return $this->members()->count();
     }
 
-    private function guardAgainstToManyMembers()
+    private function guardAgainstToManyMembers($users)
     {
-        if ($this->count() >= $this->size) {
+        $numUsersToAdd = ($users instanceof User) ? 1 : $users->count();
+
+        $newTeamCount = $this->count() + $numUsersToAdd;
+
+        if ($newTeamCount > $this->size) {
             throw new \Exception('oops');
         }
     }
