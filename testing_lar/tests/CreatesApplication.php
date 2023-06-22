@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\User;
 use Illuminate\Contracts\Console\Kernel;
 
 trait CreatesApplication
@@ -18,5 +19,20 @@ trait CreatesApplication
         $app->make(Kernel::class)->bootstrap();
 
         return $app;
+    }
+
+    public function signIn($user = null)
+    {
+        if (! $user)
+        {
+            $user = User::factory()->create();
+
+        }
+
+        $this->user = $user;
+
+        $this->actingAs($this->user);
+
+        return $this;
     }
 }
